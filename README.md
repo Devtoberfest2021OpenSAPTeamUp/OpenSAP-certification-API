@@ -46,6 +46,10 @@ Individual metadata
 - Code Samples  : https://github.com/SAP-samples/abap-platform-rap-opensap
 - ABAP RESTful Application Programming "scaffoling" => rapid prototype and code generator : https://github.com/SAP-samples/cloud-abap-rap
 - https://community.sap.com/resources/code-samples
+- https://github.com/search?q=topic%3Aabap+org%3ASAP-samples&type=Repositories
+- https://github.com/search?l=ABAP&q=topic%3Aabap&type=Repositories
+- https://github.com/search?q=topic%3Aabap&type=Repositories
+- Object oriented ABAP samples : https://github.com/SAP-samples/abap-oo-basics
 
 ## data model sample
 

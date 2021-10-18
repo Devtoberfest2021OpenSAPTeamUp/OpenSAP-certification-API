@@ -40,3 +40,59 @@ Individual metadata
 - Delivered on : (date)
 - (Optional) Expiration date : (date)
 - (Optional) professional social profile
+
+## Resources
+- Open SAP : Building Apps with the ABAP RESTful Application Programming Model https://open.sap.com/courses/cp13
+- Code Samples  : https://github.com/SAP-samples/abap-platform-rap-opensap
+- ABAP RESTful Application Programming "scaffoling" => rapid prototype and code generator : https://github.com/SAP-samples/cloud-abap-rap
+- https://community.sap.com/resources/code-samples
+
+## data model sample
+
+# JSON for RAP generator
+{
+    "$schema": "https://raw.githubusercontent.com/SAP-samples/cloud-abap-rap/main/json_schemas/RAPGenerator-schema-all.json",
+    "namespace": "ZOCERTAPI",
+    "dataSourceType": "table",
+    "implementationtype": "managed_uuid",
+    "bindingType": "odata_v4_ui",
+    "package": "ZRAP_OCERTAPI",
+    "draftenabled": true,
+    "prefix": "ZOCERT",
+    "suffix": "_V0",
+    "hierarchy": {
+        "entityName": "Course",
+        "dataSource": "/dmo/a_courses_d",
+        "objectId": "course_id",
+        "uuid": "course_uuid",
+        "etagMaster": "local_last_changed_at",
+        "lastChangedAt": "last_changed_at",
+        "lastChangedBy": "last_changed_by",
+        "localInstanceLastChangedAt": "local_last_changed_at",
+        "createdAt": "created_at",
+        "createdBy": "created_by",
+        "children": [
+            {
+                "entityName": "Instructors",
+                "dataSource": "/dmo/a_instructor_d",
+                "objectId": "instructor_id",
+                "uuid": "instructor_uuid",
+                "parentUuid": "parent_uuid",
+                "etagMaster": "local_last_changed_at",
+                "localInstanceLastChangedAt": "local_last_changed_at",
+                "children": [
+                    {
+                        "entityName": "Social",
+                        "dataSource": "/dmo/a_people_social_d",
+                        "objectId": "people_social_id",
+                        "uuid": "people_social_uuid",
+                        "parentUuid": "parent_uuid",
+                        "etagMaster": "local_last_changed_at",
+                        "localInstanceLastChangedAt": "local_last_changed_at"
+                       
+                    }
+                ]
+            }
+        ]
+    }
+}

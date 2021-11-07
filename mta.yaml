@@ -1,0 +1,141 @@
+_schema-version: "3.1"
+ID: devtoberfest
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: devtoberfest-srv
+  type: nodejs
+  path: srv
+  requires:
+  - name: devtoberfest-db
+  - name: uaa_devtoberfest
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    host: ${appname}
+  build-parameters:
+    ignore: [".env", "./node_modules"]
+- name: devtoberfest-db-deployer
+  type: hdb
+  path: db
+  requires:
+  - name: devtoberfest-db
+  parameters:
+    buildpack: nodejs_buildpack
+  build-parameters:
+    ignore: [".env", "./node_modules"]
+- name: devtoberfest-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: devtoberfest-destination-service
+    parameters:
+      content-target: true
+  - name: devtoberfest_html_repo_host
+    parameters:
+      service-key:
+        name: devtoberfest_html_repo_host-key
+  - name: uaa_devtoberfest
+    parameters:
+      service-key:
+        name: uaa_devtoberfest-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: hana_app_devtoberfest_html_repo_host
+          ServiceInstanceName: devtoberfest-html5-app-host-service
+          ServiceKeyName: devtoberfest_html_repo_host-key
+          sap.cloud.service: hana.app
+        - Authentication: OAuth2UserTokenExchange
+          Name: hana_app_uaa_devtoberfest
+          ServiceInstanceName: devtoberfest-xsuaa-service
+          ServiceKeyName: uaa_devtoberfest-key
+          sap.cloud.service: hana.app
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: devtoberfest-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: devtoberfest_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - frontend.zip
+      name: frontend
+      target-path: resources/
+- name: frontend
+  type: html5
+  path: app/frontend
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: devtoberfest-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+  properties:
+    hdi-service-name: ${service-name}
+- name: devtoberfest-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          - Name: hana-app-api
+            Authentication: NoAuthentication
+            ProxyType: Internet
+            HTML5.FowardAuthToken: true
+            HTML5.DynamicDestination: true
+            Type: HTTP
+            URL: https://${appname}.${default-domain} 
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: devtoberfest-destination-service
+    service-plan: lite
+- name: devtoberfest_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: devtoberfest-html5-app-host-service
+    service-plan: app-host
+- name: uaa_devtoberfest
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: devtoberfest-xsuaa-service
+    service-plan: application
+
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+  appname: devtoberfest
+
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install --production
+    - npx -p @sap/cds-dk cds build --production

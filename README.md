@@ -53,6 +53,12 @@ Individual metadata
 
 ## data model sample
 
+# Entities API
+
+- BusinessEntity sample model https://help.sap.com/viewer/5fa7265b9ff64d73bac7cec61ee55ae6/SHIP/en-US/044e52fd345a4250b9682dbebe3a09c0.html
+- Employee sample model https://help.sap.com/viewer/5fa7265b9ff64d73bac7cec61ee55ae6/SHIP/en-US/5552aed957d147928d11fe40a05eeb8f.html
+- API Employee profile https://api.sap.com/api/ECEmployeeProfile/schema
+
 # JSON for RAP generator
     {
         "$schema": "https://raw.githubusercontent.com/SAP-samples/cloud-abap-rap/main/json_schemas/RAPGenerator-schema-all.json",
